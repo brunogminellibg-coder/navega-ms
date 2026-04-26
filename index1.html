@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#1A5276">
+<title>SIATE Navega MS</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#EEF2F5;min-height:100vh}
+.topbar{background:linear-gradient(135deg,#1A5276,#2E86C1);padding:13px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.tl{display:flex;align-items:center;gap:12px}
+.tlogo{height:26px;filter:brightness(0) invert(1)}
+.ttitle{color:white;font-size:14px;font-weight:700}
+.tsub{color:rgba(255,255,255,.7);font-size:10px;margin-top:1px}
+.tbadge{background:rgba(255,255,255,.15);color:white;font-size:10px;font-weight:600;padding:4px 10px;border-radius:18px}
+.nav{display:flex;background:white;border-bottom:1px solid #E0E6ED;overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nb{padding:11px 16px;font-size:12.5px;font-weight:600;color:#85929E;border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;font-family:inherit}
+.nb.on{color:#1A5276;border-bottom-color:#1A5276}
+.wrap{display:flex;max-width:1100px;margin:0 auto;padding:0}
+.sidebar{width:200px;background:white;border-right:1px solid #E0E6ED;min-height:calc(100vh - 90px);padding:12px 0;flex-shrink:0;display:block}
+@media(max-width:700px){.sidebar{display:none}}
+.ss{font-size:9.5px;font-weight:700;color:#85929E;letter-spacing:.9px;text-transform:uppercase;padding:8px 14px 3px}
+.si{display:flex;align-items:center;gap:8px;padding:7px 14px;cursor:pointer;font-size:12.5px;color:#2C3E50;transition:background .1s}
+.si:hover{background:#F4F6F7}
+.si.on{background:#EBF5FB;color:#1A5276;font-weight:600}
+.si-ico{font-size:14px;width:18px;text-align:center}
+.si-badge{margin-left:auto;background:#F4F6F7;color:#85929E;font-size:9.5px;padding:1px 6px;border-radius:9px}
+.si.on .si-badge{background:rgba(26,82,118,.12);color:#1A5276}
+.content{flex:1;padding:16px;min-width:0}
+.page{display:none}
+.page.on{display:block}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+@media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:white;border-radius:10px;padding:12px 14px;border:1px solid #E0E6ED}
+.slbl{font-size:10.5px;color:#85929E;margin-bottom:3px}
+.sval{font-size:22px;font-weight:700;color:#2C3E50}
+.ssub{font-size:10px;color:#85929E;margin-top:1px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+@media(max-width:700px){.row2{grid-template-columns:1fr}}
+.card{background:white;border-radius:12px;border:1px solid #E0E6ED;padding:14px 16px}
+.ctitle{font-size:10px;font-weight:700;color:#85929E;text-transform:uppercase;letter-spacing:.7px;margin-bottom:11px}
+.citem{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid #F4F6F7}
+.citem:last-child{border-bottom:none}
+.cico{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.cname{font-size:12.5px;color:#2C3E50;flex:1}
+.ccnt{font-size:10.5px;color:#85929E}
+.cbar{width:50px;height:3px;background:#EEF2F5;border-radius:2px;overflow:hidden}
+.cbarf{height:100%;background:#2E86C1;border-radius:2px}
+.pill{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid #F4F6F7;cursor:pointer}
+.pill:last-child{border-bottom:none}
+.ptag{font-size:9px;font-weight:700;padding:2px 6px;border-radius:9px;white-space:nowrap}
+.ptitle{font-size:12.5px;color:#2C3E50;flex:1}
+.pmeta{font-size:10.5px;color:#85929E;white-space:nowrap}
+.emgbox{background:#FDEDEC;border:1px solid #F5B7B1;border-radius:12px;padding:13px 16px;margin-bottom:12px;display:flex;align-items:center;gap:12px}
+.emgbtn{margin-left:auto;background:#993C1D;color:white;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+.fcard{background:white;border-radius:12px;border:1px solid #E0E6ED;padding:14px 16px;margin-bottom:12px}
+.arow{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid #F4F6F7}
+.arow:last-child{border-bottom:none}
+.anum{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:700;flex-shrink:0;color:white}
+.atitle{font-size:12.5px;color:#2C3E50;flex:1}
+.ameta{font-size:10.5px;color:#85929E;white-space:nowrap}
+.playbtn{width:24px;height:24px;border-radius:50%;background:#EBF5FB;border:1px solid #AED6F1;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:10px;color:#1A5276}
+.cartrow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #F4F6F7}
+.cartrow:last-child{border-bottom:none}
+.cartico{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.cartname{font-size:13px;color:#2C3E50;font-weight:600;flex:1}
+.cartsrc{font-size:10.5px;color:#85929E;margin-top:1px}
+.vbtn{font-size:11px;color:#1A5276;font-weight:600;padding:4px 10px;border:1px solid #AED6F1;border-radius:8px;cursor:pointer;background:#EBF5FB;text-decoration:none;white-space:nowrap}
+.proto{background:white;border-radius:12px;border:1px solid #E0E6ED;padding:14px 16px;margin-bottom:10px}
+.phdr{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.pico{font-size:20px}
+.ptitle2{font-size:13.5px;font-weight:700;color:#2C3E50;flex:1}
+.ptag2{font-size:9.5px;font-weight:600;padding:2px 8px;border-radius:9px;background:#FDEDEC;color:#993C1D}
+.slist{display:flex;flex-direction:column;gap:5px}
+.srow{display:flex;gap:8px;align-items:flex-start}
+.snum{width:20px;height:20px;border-radius:50%;background:#993C1D;color:white;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.stxt{font-size:12px;color:#5F6B7A;line-height:1.5}
+.samubtn{display:inline-flex;align-items:center;gap:6px;margin-top:10px;background:#FDEDEC;color:#993C1D;border:1px solid #F5B7B1;border-radius:8px;padding:7px 13px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit}
+.conshero{background:linear-gradient(135deg,#1A5276,#2E86C1);border-radius:12px;padding:18px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start}
+.chico{width:52px;height:52px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.chtitle{color:white;font-size:15px;font-weight:700}
+.chsub{color:rgba(255,255,255,.75);font-size:11.5px;margin-top:3px;line-height:1.5}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.chip{font-size:10px;font-weight:600;padding:3px 8px;border-radius:10px}
+.fi{width:100%;border:1px solid #D5DBE2;border-radius:9px;padding:9px 11px;font-size:13px;font-family:inherit;color:#2C3E50;outline:none;background:white}
+.fi:focus{border-color:#2E86C1;box-shadow:0 0 0 3px rgba(46,134,193,.1)}
+.flbl{font-size:10px;font-weight:700;color:#85929E;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;display:block}
+.fg{margin-bottom:11px}
+.fgrow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sbtn{background:#1A5276;color:white;border:none;border-radius:9px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.sbtn:hover{background:#2E86C1}
+.roombox{background:#E8F8F5;border:1px solid #A9DFBF;border-radius:10px;padding:12px 14px;margin-top:12px}
+.roomlink{font-family:monospace;font-size:12px;color:#0F6E56;word-break:break-all;margin:6px 0 10px}
+.copybtn{font-size:11.5px;padding:6px 13px;background:white;border:1px solid #AED6F1;border-radius:8px;cursor:pointer;font-family:inherit;color:#1A5276;font-weight:600;margin-right:6px}
+.openbtn{font-size:11.5px;padding:6px 13px;background:#1A5276;border:none;border-radius:8px;cursor:pointer;font-family:inherit;color:white;font-weight:600;text-decoration:none;display:inline-block}
+.pfhdr{display:flex;align-items:center;gap:14px;padding-bottom:14px;border-bottom:1px solid #E0E6ED;margin-bottom:14px}
+.pfav{width:50px;height:50px;border-radius:50%;background:#EBF5FB;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#1A5276;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tl">
+    <img class="tlogo" src="data:image/png;base64,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" alt="SIATE">
+    <div>
+      <div class="ttitle">SIATE&#174; Navega MS</div>
+      <div class="tsub">Sistema Integrado de Atendimento em Telemedicina</div>
+    </div>
+  </div>
+  <div class="tbadge">Projeto Navega MS &middot; 2025</div>
+</div>
+
+<div class="nav">
+  <button class="nb on" onclick="go('home',this)">&#127968; In&iacute;cio</button>
+  <button class="nb" onclick="go('temas',this)">&#128218; Temas de Sa&uacute;de</button>
+  <button class="nb" onclick="go('cartilhas',this)">&#128196; Cartilhas</button>
+  <button class="nb" onclick="go('urgencia',this)">&#128680; Urg&ecirc;ncia</button>
+  <button class="nb" onclick="go('consulta',this)">&#129322; Consulta Online</button>
+  <button class="nb" onclick="go('perfil',this)">&#128100; Perfil</button>
+</div>
+
+<div class="wrap">
+  <div class="sidebar">
+    <div class="ss">Navega&ccedil;&atilde;o</div>
+    <div class="si on" onclick="go('home',null)"><span class="si-ico">&#127968;</span> In&iacute;cio</div>
+    <div class="si" onclick="go('temas',null)"><span class="si-ico">&#128118;</span> Puericultura <span class="si-badge">8</span></div>
+    <div class="si" onclick="go('temas',null)"><span class="si-ico">&#129354;</span> Pr&eacute;-natal <span class="si-badge">6</span></div>
+    <div class="si" onclick="go('temas',null)"><span class="si-ico">&#128137;</span> Vacina&ccedil;&atilde;o <span class="si-badge">5</span></div>
+    <div class="si" onclick="go('temas',null)"><span class="si-ico">&#10084;&#65039;</span> Hipertens&atilde;o <span class="si-badge">7</span></div>
+    <div class="si" onclick="go('temas',null)"><span class="si-ico">&#129656;</span> Diabetes <span class="si-badge">6</span></div>
+    <div class="si" onclick="go('temas',null)"><span class="si-ico">&#129504;</span> Sa&uacute;de Mental <span class="si-badge">3</span></div>
+    <div class="si" onclick="go('temas',null)"><span class="si-ico">&#127807;</span> S. Ambiental <span class="si-badge">5</span></div>
+    <div class="ss" style="margin-top:8px">Recursos</div>
+    <div class="si" onclick="go('cartilhas',null)"><span class="si-ico">&#128218;</span> Cartilhas MS</div>
+    <div class="si" onclick="go('urgencia',null)"><span class="si-ico">&#128680;</span> Prot. Urg&ecirc;ncia</div>
+    <div class="si" onclick="go('consulta',null)"><span class="si-ico">&#129322;</span> Consulta Online</div>
+  </div>
+
+  <div class="content">
+
+    <!-- HOME -->
+    <div class="page on" id="page-home">
+      <div class="stats">
+        <div class="stat"><div class="slbl">Categorias</div><div class="sval">8</div><div class="ssub">Temas de sa&uacute;de</div></div>
+        <div class="stat"><div class="slbl">Aulas</div><div class="sval">44</div><div class="ssub">V&iacute;deos estruturados</div></div>
+        <div class="stat"><div class="slbl">Cartilhas MS</div><div class="sval">8</div><div class="ssub">Material oficial</div></div>
+        <div class="stat"><div class="slbl">Prot. Urg&ecirc;ncia</div><div class="sval">6</div><div class="ssub">Dispon&iacute;vel offline</div></div>
+      </div>
+      <div class="emgbox">
+        <div style="font-size:20px">&#128680;</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#993C1D">Protocolos de emerg&ecirc;ncia dispon&iacute;veis</div>
+          <div style="font-size:11px;color:#993C1D;opacity:.8;margin-top:2px">Cobra, escorpi&atilde;o, afogamento, convuls&atilde;o, queimadura, desidrata&ccedil;&atilde;o</div>
+        </div>
+        <button class="emgbtn" onclick="go('urgencia',null)">Ver protocolos</button>
+      </div>
+      <div class="row2">
+        <div class="card">
+          <div class="ctitle">Temas de Sa&uacute;de</div>
+          <div class="citem"><div class="cico" style="background:#E1F5EE">&#128118;</div><div class="cname">Puericultura</div><div class="ccnt">8 aulas</div><div class="cbar"><div class="cbarf" style="width:100%"></div></div></div>
+          <div class="citem"><div class="cico" style="background:#E6F1FB">&#129354;</div><div class="cname">Pr&eacute;-natal</div><div class="ccnt">6 aulas</div><div class="cbar"><div class="cbarf" style="width:75%"></div></div></div>
+          <div class="citem"><div class="cico" style="background:#FAEEDA">&#128137;</div><div class="cname">Vacina&ccedil;&atilde;o</div><div class="ccnt">5 aulas</div><div class="cbar"><div class="cbarf" style="width:62%"></div></div></div>
+          <div class="citem"><div class="cico" style="background:#FCEBEB">&#10084;&#65039;</div><div class="cname">Hipertens&atilde;o</div><div class="ccnt">7 aulas</div><div class="cbar"><div class="cbarf" style="width:88%"></div></div></div>
+          <div class="citem"><div class="cico" style="background:#EAF3DE">&#129656;</div><div class="cname">Diabetes</div><div class="ccnt">6 aulas</div><div class="cbar"><div class="cbarf" style="width:75%"></div></div></div>
+          <div class="citem"><div class="cico" style="background:#F5EEF8">&#129504;</div><div class="cname">Sa&uacute;de Mental</div><div class="ccnt">3 aulas</div><div class="cbar"><div class="cbarf" style="width:37%"></div></div></div>
+          <div class="citem"><div class="cico" style="background:#E0F7FA">&#127807;</div><div class="cname">Sa&uacute;de Ambiental</div><div class="ccnt">5 aulas</div><div class="cbar"><div class="cbarf" style="width:62%"></div></div></div>
+        </div>
+        <div class="card">
+          <div class="ctitle">P&iacute;lulas em Destaque</div>
+          <div class="pill"><span class="ptag" style="background:#E1F5EE;color:#085041">Puericultura</span><div class="ptitle">Como amamentar do jeito certo</div><div class="pmeta">3 min</div></div>
+          <div class="pill"><span class="ptag" style="background:#E6F1FB;color:#0C447C">Pr&eacute;-natal</span><div class="ptitle">Sinais de alerta na gravidez</div><div class="pmeta">4 min</div></div>
+          <div class="pill"><span class="ptag" style="background:#FAEEDA;color:#633806">Vacina&ccedil;&atilde;o</span><div class="ptitle">Calend&aacute;rio vacinal da crian&ccedil;a</div><div class="pmeta">5 min</div></div>
+          <div class="pill"><span class="ptag" style="background:#FCEBEB;color:#791F1F">Hipertens&atilde;o</span><div class="ptitle">O que &eacute; press&atilde;o alta</div><div class="pmeta">4 min</div></div>
+          <div class="pill"><span class="ptag" style="background:#E0F7FA;color:#004D40">S. Ambiental</span><div class="ptitle">Dengue: como prevenir em casa</div><div class="pmeta">3 min</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEMAS -->
+    <div class="page" id="page-temas">
+      <div class="fcard">
+        <div class="ctitle">Puericultura &mdash; Sa&uacute;de da crian&ccedil;a de 0 a 9 anos</div>
+        <div class="arow"><div class="anum" style="background:#0F6E56">A01</div><div class="atitle">Como amamentar do jeito certo</div><div class="ameta">Enf. Elaine &middot; 3 min</div><div class="playbtn">&#9654;</div></div>
+        <div class="arow"><div class="anum" style="background:#0F6E56">A02</div><div class="atitle">Ganho de peso do beb&ecirc; &mdash; o que &eacute; normal?</div><div class="ameta">Enf. Bruna &middot; 4 min</div><div class="playbtn">&#9654;</div></div>
+        <div class="arow"><div class="anum" style="background:#0F6E56">A03</div><div class="atitle">Quando levar o beb&ecirc; ao m&eacute;dico?</div><div class="ameta">Enf. Elaine &middot; 3 min</div><div class="playbtn">&#9654;</div></div>
+        <div class="arow"><div class="anum" style="background:#0F6E56">A04</div><div class="atitle">Febre na crian&ccedil;a &mdash; o que fazer?</div><div class="ameta">Enf. Bruna &middot; 4 min</div><div class="playbtn">&#9654;</div></div>
+        <div class="arow"><div class="anum" style="background:#0F6E56">A05</div><div class="atitle">Diarreia e v&ocirc;mito no beb&ecirc;</div><div class="ameta">Enf. Elaine &middot; 3 min</div><div class="playbtn">&#9654;</div></div>
+        <div class="arow"><div class="anum" style="background:#0F6E56">A06</div><div class="atitle">Alimenta&ccedil;&atilde;o da crian&ccedil;a de 6 meses a 2 anos</div><div class="ameta">Enf. Bruna &middot; 5 min</div><div class="playbtn">&#9654;</div></div>
+        <div class="arow"><div class="anum" style="background:#0F6E56">A07</div><div class="atitle">Higiene do beb&ecirc; &mdash; banho e cuidados</div><div class="ameta">Enf. Elaine &middot; 3 min</div><div class="playbtn">&#9654;</div></div>
+        <div class="arow"><div class="anum" style="background:#0F6E56">A08</div><div class="atitle">Desenvolvimento da crian&ccedil;a m&ecirc;s a m&ecirc;s</div><div class="ameta">Enf. Bruna &middot; 5 min</div><div class="playbtn">&#9654;</div></div>
+      </div>
+      <div class="fcard">
+        <div class="ctitle">Pr&eacute;-natal &mdash; Gesta&ccedil;&atilde;o, parto e cuidados</div>
+        <div class="arow"><div class="anum" style="background:#2E86C1">A01</div><div class="atitle">Meu beb&ecirc; parou de mexer &mdash; e agora?</div><div class="ameta">Enf. Bruna &middot; 4 min</div><div class="playbtn">&#9654;</div></div>
+        <div class="arow"><div class="anum" style="background:#2E86C1">A02</div><div class="atitle">Sinais de alerta na gravidez</div><div class="ameta">Enf. Elaine &middot; 4 min</div><div class="playbtn">&#9654;</div></div>
+        <div class="arow"><div class="anum" style="background:#2E86C1">A03</div><div class="atitle">Quantas consultas preciso fazer?</div><div class="ameta">Enf. Bruna &middot; 3 min</div><div class="playbtn">&#9654;</div></div>
+        <div class="arow"><div class="anum" style="background:#2E86C1">A04</div><div class="atitle">Alimenta&ccedil;&atilde;o saud&aacute;vel na gesta&ccedil;&atilde;o</div><div class="ameta">Enf. Elaine &middot; 5 min</div><div class="playbtn">&#9654;</div></div>
+        <div class="arow"><div class="anum" style="background:#2E86C1">A05</div><div class="atitle">O que n&atilde;o posso fazer na gravidez?</div><div class="ameta">Enf. Bruna &middot; 4 min</div><div class="playbtn">&#9654;</div></div>
+        <div class="arow"><div class="anum" style="background:#2E86C1">A06</div><div class="atitle">O papel do pai no pr&eacute;-natal</div><div class="ameta">Enf. Elaine &middot; 3 min</div><div class="playbtn">&#9654;</div></div>
+      </div>
+      <div class="fcard">
+        <div class="ctitle">Hipertens&atilde;o &mdash; Press&atilde;o alta e sa&uacute;de do cora&ccedil;&atilde;o</div>
+        <div class="arow"><div class="anum" style="background:#C0392B">A01</div><div class="atitle">O que &eacute; press&atilde;o alta e como reconhecer?</div><div class="ameta">Enf. Bruna &middot; 4 min</div><div class="playbtn">&#9654;</div></div>
+        <div class="arow"><div class="anum" style="background:#C0392B">A02</div><div class="atitle">Como medir a press&atilde;o em casa</div><div class="ameta">Enf. Elaine &middot; 3 min</div><div class="playbtn">&#9654;</div></div>
+        <div class="arow"><div class="anum" style="background:#C0392B">A03</div><div class="atitle">Alimentos que aumentam a press&atilde;o</div><div class="ameta">Enf. Bruna &middot; 4 min</div><div class="playbtn">&#9654;</div></div>
+        <div class="arow"><div class="anum" style="background:#C0392B">A04</div><div class="atitle">Exerc&iacute;cio para quem tem press&atilde;o alta</div><div class="ameta">Enf. Elaine &middot; 3 min</div><div class="playbtn">&#9654;</div></div>
+        <div class="arow"><div class="anum" style="background:#C0392B">A05</div><div class="atitle">Posso parar o rem&eacute;dio de press&atilde;o?</div><div class="ameta">Enf. Bruna &middot; 4 min</div><div class="playbtn">&#9654;</div></div>
+        <div class="arow"><div class="anum" style="background:#C0392B">A06</div><div class="atitle">Press&atilde;o alta na gravidez &mdash; pr&eacute;-ecl&acirc;mpsia</div><div class="ameta">Enf. Elaine &middot; 5 min</div><div class="playbtn">&#9654;</div></div>
+        <div class="arow"><div class="anum" style="background:#C0392B">A07</div><div class="atitle">Crise hipertensiva &mdash; o que fazer agora?</div><div class="ameta">Enf. Bruna &middot; 3 min</div><div class="playbtn">&#9654;</div></div>
+      </div>
+    </div>
+
+    <!-- CARTILHAS -->
+    <div class="page" id="page-cartilhas">
+
+      <!-- CSS extra para cartilhas -->
+      <style>
+      .clist{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:12px}
+      .ccard{background:white;border-radius:12px;border:1px solid #E0E6ED;overflow:hidden;cursor:pointer;transition:box-shadow .15s}
+      .ccard:hover{box-shadow:0 4px 16px rgba(0,0,0,.1)}
+      .ccard-hdr{padding:14px 16px;display:flex;align-items:center;gap:10px}
+      .ccard-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+      .ccard-cat{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;margin-bottom:2px}
+      .ccard-name{font-size:13px;font-weight:700;color:#2C3E50;line-height:1.3}
+      .ccard-src{font-size:10.5px;color:#85929E;margin-top:1px}
+      .ccard-body{display:none;border-top:1px solid #F4F6F7;padding:14px 16px}
+      .ccard.open .ccard-body{display:block}
+      .cintro{font-size:13px;color:#2C3E50;line-height:1.7;font-weight:600;margin-bottom:12px}
+      .csec-title{font-size:9.5px;font-weight:700;color:#1A5276;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+      .info-cards{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+      .info-card{display:flex;gap:9px;background:#F4F6F7;border-radius:9px;padding:9px;border-left:3px solid #1A5276}
+      .info-card-ico{font-size:18px;flex-shrink:0}
+      .info-card-ttl{font-size:12px;font-weight:700;color:#2C3E50;margin-bottom:2px}
+      .info-card-desc{font-size:11px;color:#85929E;line-height:1.4}
+      .tip-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+      .tip-item{background:#F4F6F7;border-radius:9px;padding:10px;text-align:center}
+      .tip-ico{font-size:22px;margin-bottom:4px}
+      .tip-txt{font-size:11px;font-weight:600;color:#2C3E50;line-height:1.3}
+      .alert-box{background:#FFF3CD;border-left:3px solid #E67E22;border-radius:9px;padding:10px 12px;margin-bottom:8px;display:flex;gap:8px}
+      .alert-txt{font-size:11.5px;color:#7D4E00;line-height:1.5;font-weight:600}
+      .good-bad{display:flex;gap:7px;margin-bottom:10px}
+      .good-col{flex:1;background:#E8F8F5;border-radius:9px;padding:10px}
+      .bad-col{flex:1;background:#FDEDEC;border-radius:9px;padding:10px}
+      .gb-lbl{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px}
+      .good-col .gb-lbl{color:#0F6E56}
+      .bad-col .gb-lbl{color:#993C1D}
+      .gb-item{font-size:11.5px;color:#2C3E50;margin-bottom:3px}
+      .steps-list{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
+      .step-r{display:flex;gap:8px;background:#F4F6F7;border-radius:9px;padding:8px 10px}
+      .step-b{width:22px;height:22px;border-radius:50%;background:#1A5276;color:white;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+      .step-t{font-size:11.5px;color:#2C3E50;line-height:1.5;font-weight:600}
+      .ms-link{display:flex;align-items:center;gap:7px;margin-top:12px;background:#1A5276;color:white;border-radius:9px;padding:10px 14px;font-size:12.5px;font-weight:700;text-decoration:none;justify-content:center}
+      .toggle-btn{margin-left:auto;font-size:11px;color:#1A5276;font-weight:600;background:#EBF5FB;border:1px solid #AED6F1;border-radius:8px;padding:4px 10px;cursor:pointer;font-family:inherit;white-space:nowrap}
+      </style>
+
+      <div class="clist">
+
+        <!-- 1. Caderneta da Crianca -->
+        <div class="ccard" id="c1">
+          <div class="ccard-hdr">
+            <div class="ccard-ico" style="background:#E1F5EE">&#128118;</div>
+            <div style="flex:1">
+              <div class="ccard-cat" style="color:#085041">Puericultura</div>
+              <div class="ccard-name">Caderneta da Crian&ccedil;a</div>
+              <div class="ccard-src">Minist&eacute;rio da Sa&uacute;de &middot; 2024</div>
+            </div>
+            <button class="toggle-btn" onclick="toggleCart('c1',this)">Ver resumo</button>
+          </div>
+          <div class="ccard-body">
+            <div class="cintro">A Caderneta da Crian&ccedil;a &eacute; o documento mais importante do seu beb&ecirc;. Nela ficam registrados o crescimento, as vacinas e o desenvolvimento at&eacute; os 9 anos.</div>
+            <div class="csec-title">O que registrar?</div>
+            <div class="info-cards">
+              <div class="info-card"><div class="info-card-ico">&#9878;&#65039;</div><div><div class="info-card-ttl">Peso e altura</div><div class="info-card-desc">Anote a cada consulta para acompanhar o crescimento.</div></div></div>
+              <div class="info-card"><div class="info-card-ico">&#128137;</div><div><div class="info-card-ttl">Vacinas tomadas</div><div class="info-card-desc">Cada vacina tem espa&ccedil;o para carimbo e data. Nunca perca!</div></div></div>
+              <div class="info-card"><div class="info-card-ico">&#128065;&#65039;</div><div><div class="info-card-ttl">Vis&atilde;o e audi&ccedil;&atilde;o</div><div class="info-card-desc">Teste do olhinho e da orelhinha logo ap&oacute;s o nascimento.</div></div></div>
+            </div>
+            <div class="csec-title">Dicas pr&aacute;ticas</div>
+            <div class="tip-grid">
+              <div class="tip-item"><div class="tip-ico">&#127973;</div><div class="tip-txt">Leve sempre &agrave; consulta</div></div>
+              <div class="tip-item"><div class="tip-ico">&#128197;</div><div class="tip-txt">Anote as datas das vacinas</div></div>
+              <div class="tip-item"><div class="tip-ico">&#128274;</div><div class="tip-txt">Guarde em lugar seguro</div></div>
+              <div class="tip-item"><div class="tip-ico">&#128247;</div><div class="tip-txt">Tire uma foto de seguran&ccedil;a</div></div>
+            </div>
+            <div class="alert-box"><div style="font-size:18px;flex-shrink:0">&#9888;&#65039;</div><div class="alert-txt">Sem a caderneta, a crian&ccedil;a n&atilde;o consegue tomar vacinas na UBS nem fazer matr&iacute;cula na escola!</div></div>
+            <a class="ms-link" href="https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/s/saude-da-crianca/caderneta" target="_blank">&#128196; Ver cartilha oficial do Minist&eacute;rio da Sa&uacute;de</a>
+          </div>
+        </div>
+
+        <!-- 2. Vacinacao -->
+        <div class="ccard" id="c2">
+          <div class="ccard-hdr">
+            <div class="ccard-ico" style="background:#FAEEDA">&#128137;</div>
+            <div style="flex:1">
+              <div class="ccard-cat" style="color:#633806">Vacina&ccedil;&atilde;o</div>
+              <div class="ccard-name">Calend&aacute;rio Nacional de Vacina&ccedil;&atilde;o 2025</div>
+              <div class="ccard-src">Minist&eacute;rio da Sa&uacute;de &middot; PNI &middot; 2025</div>
+            </div>
+            <button class="toggle-btn" onclick="toggleCart('c2',this)">Ver resumo</button>
+          </div>
+          <div class="ccard-body">
+            <div class="cintro">O Brasil tem um dos melhores calend&aacute;rios de vacina&ccedil;&atilde;o do mundo &mdash; e &eacute; tudo gratuito no posto de sa&uacute;de.</div>
+            <div class="csec-title">Vacinas do beb&ecirc; &mdash; primeiros meses</div>
+            <div class="steps-list">
+              <div class="step-r"><div class="step-b">1</div><div class="step-t">Ao nascer: BCG (tuberculose) + Hepatite B</div></div>
+              <div class="step-r"><div class="step-b">2</div><div class="step-t">2 meses: Pentavalente + VIP + Pneumoc&oacute;cica + Rotavirus</div></div>
+              <div class="step-r"><div class="step-b">3</div><div class="step-t">4 meses: Pentavalente + VIP + Pneumoc&oacute;cica</div></div>
+              <div class="step-r"><div class="step-b">4</div><div class="step-t">6 meses: Pentavalente + VIP + Influenza</div></div>
+              <div class="step-r"><div class="step-b">5</div><div class="step-t">9 meses: Febre Amarela</div></div>
+              <div class="step-r"><div class="step-b">6</div><div class="step-t">12 meses: Tr&iacute;plice Viral + Meningoc&oacute;cica C</div></div>
+              <div class="step-r"><div class="step-b">7</div><div class="step-t">15 meses: DTP + VOP + Varicela + Hepatite A</div></div>
+            </div>
+            <div class="tip-grid">
+              <div class="tip-item"><div class="tip-ico">&#127990;</div><div class="tip-txt">Todas gratuitas no SUS</div></div>
+              <div class="tip-item"><div class="tip-ico">&#128205;</div><div class="tip-txt">Em qualquer UBS do Brasil</div></div>
+              <div class="tip-item"><div class="tip-ico">&#9995;</div><div class="tip-txt">Adultos tamb&eacute;m precisam</div></div>
+              <div class="tip-item"><div class="tip-ico">&#127796;</div><div class="tip-txt">Febre amarela obrigat&oacute;ria no MS</div></div>
+            </div>
+            <div class="alert-box"><div style="font-size:18px;flex-shrink:0">&#9888;&#65039;</div><div class="alert-txt">Se a crian&ccedil;a atrasar uma vacina, pode tomar depois. O que importa &eacute; completar o esquema!</div></div>
+            <a class="ms-link" href="https://www.gov.br/saude/pt-br/vacinacao/calendario" target="_blank">&#128196; Ver calend&aacute;rio oficial do Minist&eacute;rio da Sa&uacute;de</a>
+          </div>
+        </div>
+
+        <!-- 3. Pre-natal -->
+        <div class="ccard" id="c3">
+          <div class="ccard-hdr">
+            <div class="ccard-ico" style="background:#E6F1FB">&#129354;</div>
+            <div style="flex:1">
+              <div class="ccard-cat" style="color:#0C447C">Pr&eacute;-natal</div>
+              <div class="ccard-name">Guia do Pr&eacute;-natal</div>
+              <div class="ccard-src">Minist&eacute;rio da Sa&uacute;de &middot; SAPS &middot; 2024</div>
+            </div>
+            <button class="toggle-btn" onclick="toggleCart('c3',this)">Ver resumo</button>
+          </div>
+          <div class="ccard-body">
+            <div class="cintro">O pr&eacute;-natal &eacute; o acompanhamento da m&atilde;e e do beb&ecirc; durante a gravidez. &Eacute; gratuito no SUS e fundamental para uma gesta&ccedil;&atilde;o segura.</div>
+            <div class="csec-title">O que fazer em cada etapa</div>
+            <div class="steps-list">
+              <div class="step-r"><div class="step-b">1</div><div class="step-t">1&ordm; trimestre: Confirmar gravidez, primeira consulta e exames de sangue e urina</div></div>
+              <div class="step-r"><div class="step-b">2</div><div class="step-t">2&ordm; trimestre: Ultrassom morfol&oacute;gico, vacinas e teste de glicose</div></div>
+              <div class="step-r"><div class="step-b">3</div><div class="step-t">3&ordm; trimestre: Consultas quinzenais e prepara&ccedil;&atilde;o para o parto</div></div>
+            </div>
+            <div class="csec-title">Sinais de alerta &mdash; v&aacute; ao pronto-socorro</div>
+            <div class="alert-box"><div style="font-size:18px;flex-shrink:0">&#128680;</div><div class="alert-txt">Sangramento vaginal a qualquer momento</div></div>
+            <div class="alert-box"><div style="font-size:18px;flex-shrink:0">&#128680;</div><div class="alert-txt">Dor de cabe&ccedil;a forte com vis&atilde;o emba&ccedil;ada e inchaço &mdash; pré-eclâmpsia</div></div>
+            <div class="alert-box"><div style="font-size:18px;flex-shrink:0">&#128680;</div><div class="alert-txt">Beb&ecirc; sem mexer por mais de 12 horas &mdash; emerg&ecirc;ncia</div></div>
+            <div class="csec-title" style="margin-top:10px">Na gravidez</div>
+            <div class="good-bad">
+              <div class="good-col"><div class="gb-lbl">&#10003; Pode</div><div class="gb-item">Caminhar levemente</div><div class="gb-item">Comer frutas e verduras</div><div class="gb-item">Tomar &aacute;cido f&oacute;lico</div><div class="gb-item">Dormir de lado</div></div>
+              <div class="bad-col"><div class="gb-lbl">&#10007; Evite</div><div class="gb-item">&Aacute;lcool e cigarro</div><div class="gb-item">Rem&eacute;dios sem receita</div><div class="gb-item">Esfor&ccedil;o f&iacute;sico intenso</div><div class="gb-item">Automedicação</div></div>
+            </div>
+            <a class="ms-link" href="https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/g/gravidez/publicacoes" target="_blank">&#128196; Ver guia oficial do Minist&eacute;rio da Sa&uacute;de</a>
+          </div>
+        </div>
+
+        <!-- 4. Hipertensao -->
+        <div class="ccard" id="c4">
+          <div class="ccard-hdr">
+            <div class="ccard-ico" style="background:#FCEBEB">&#10084;&#65039;</div>
+            <div style="flex:1">
+              <div class="ccard-cat" style="color:#791F1F">Hipertens&atilde;o</div>
+              <div class="ccard-name">Hipertens&atilde;o Arterial</div>
+              <div class="ccard-src">Minist&eacute;rio da Sa&uacute;de &middot; 2023</div>
+            </div>
+            <button class="toggle-btn" onclick="toggleCart('c4',this)">Ver resumo</button>
+          </div>
+          <div class="ccard-body">
+            <div class="cintro">Press&atilde;o alta &eacute; quando o sangue faz for&ccedil;a demais nas veias. N&atilde;o d&oacute;i, mas pode causar derrame e infarto. Com tratamento, d&aacute; para viver muito bem!</div>
+            <div class="csec-title">Entendendo sua press&atilde;o</div>
+            <div class="info-cards">
+              <div class="info-card" style="border-left-color:#0F6E56"><div class="info-card-ico">&#10003;</div><div><div class="info-card-ttl">Normal</div><div class="info-card-desc">Abaixo de 12 por 8 (120/80 mmHg)</div></div></div>
+              <div class="info-card" style="border-left-color:#E67E22"><div class="info-card-ico">&#9888;&#65039;</div><div><div class="info-card-ttl">Elevada</div><div class="info-card-desc">Entre 13x8 e 13x9 &mdash; aten&ccedil;&atilde;o!</div></div></div>
+              <div class="info-card" style="border-left-color:#C0392B"><div class="info-card-ico">&#128680;</div><div><div class="info-card-ttl">Hipertens&atilde;o</div><div class="info-card-desc">Acima de 14x9 (140/90) &mdash; precisa de tratamento</div></div></div>
+              <div class="info-card" style="border-left-color:#993C1D"><div class="info-card-ico">&#128250;</div><div><div class="info-card-ttl">Crise hipertensiva</div><div class="info-card-desc">Acima de 18x12 &mdash; v&aacute; ao pronto-socorro agora</div></div></div>
+            </div>
+            <div class="good-bad">
+              <div class="good-col"><div class="gb-lbl">&#10003; Faz bem</div><div class="gb-item">Caminhar 30 min/dia</div><div class="gb-item">Comer frutas e verduras</div><div class="gb-item">Reduzir o sal</div><div class="gb-item">Tomar o rem&eacute;dio todo dia</div></div>
+              <div class="bad-col"><div class="gb-lbl">&#10007; Faz mal</div><div class="gb-item">Sal em excesso</div><div class="gb-item">Bebida alco&oacute;lica</div><div class="gb-item">Cigarro</div><div class="gb-item">Parar o rem&eacute;dio sozinho</div></div>
+            </div>
+            <div class="alert-box"><div style="font-size:18px;flex-shrink:0">&#9888;&#65039;</div><div class="alert-txt">Nunca pare o rem&eacute;dio porque a press&atilde;o normalizou. Ela fica boa POR CAUSA do rem&eacute;dio. Parar pode causar infarto ou derrame!</div></div>
+            <a class="ms-link" href="https://www.gov.br/saude/pt-br/composicao/saps/publicacoes/cartazes-e-cartilhas" target="_blank">&#128196; Ver cartilha oficial do Minist&eacute;rio da Sa&uacute;de</a>
+          </div>
+        </div>
+
+        <!-- 5. Diabetes -->
+        <div class="ccard" id="c5">
+          <div class="ccard-hdr">
+            <div class="ccard-ico" style="background:#EAF3DE">&#129656;</div>
+            <div style="flex:1">
+              <div class="ccard-cat" style="color:#1E5207">Diabetes</div>
+              <div class="ccard-name">Diabetes Mellitus</div>
+              <div class="ccard-src">Minist&eacute;rio da Sa&uacute;de &middot; 2025</div>
+            </div>
+            <button class="toggle-btn" onclick="toggleCart('c5',this)">Ver resumo</button>
+          </div>
+          <div class="ccard-body">
+            <div class="cintro">Diabetes &eacute; quando o a&ccedil;&uacute;car fica alto demais no sangue. Com alimenta&ccedil;&atilde;o certa e rem&eacute;dio quando necess&aacute;rio, d&aacute; para controlar e ter qualidade de vida.</div>
+            <div class="csec-title">Entendendo a glicemia</div>
+            <div class="info-cards">
+              <div class="info-card" style="border-left-color:#0F6E56"><div class="info-card-ico">&#10003;</div><div><div class="info-card-ttl">Normal em jejum</div><div class="info-card-desc">Abaixo de 100 mg/dL</div></div></div>
+              <div class="info-card" style="border-left-color:#E67E22"><div class="info-card-ico">&#9888;&#65039;</div><div><div class="info-card-ttl">Pr&eacute;-diabetes</div><div class="info-card-desc">100 a 125 mg/dL &mdash; momento de agir!</div></div></div>
+              <div class="info-card" style="border-left-color:#C0392B"><div class="info-card-ico">&#128680;</div><div><div class="info-card-ttl">Diabetes</div><div class="info-card-desc">Acima de 126 mg/dL &mdash; precisa de tratamento</div></div></div>
+              <div class="info-card" style="border-left-color:#993C1D"><div class="info-card-ico">&#128250;</div><div><div class="info-card-ttl">Hipoglicemia</div><div class="info-card-desc">Abaixo de 70 mg/dL &mdash; comer algo doce agora</div></div></div>
+            </div>
+            <div class="csec-title">Cuidados com os p&eacute;s &mdash; muito importante!</div>
+            <div class="steps-list">
+              <div class="step-r"><div class="step-b">1</div><div class="step-t">Lave os p&eacute;s todo dia com &aacute;gua morna e sab&atilde;o</div></div>
+              <div class="step-r"><div class="step-b">2</div><div class="step-t">Seque bem entre os dedos &mdash; umidade causa feridas</div></div>
+              <div class="step-r"><div class="step-b">3</div><div class="step-t">Corte as unhas retas &mdash; nunca em curva</div></div>
+              <div class="step-r"><div class="step-b">4</div><div class="step-t">Nunca ande descal&ccedil;o, nem em casa</div></div>
+              <div class="step-r"><div class="step-b">5</div><div class="step-t">Qualquer ferida ou bolha: v&aacute; ao posto imediatamente</div></div>
+            </div>
+            <a class="ms-link" href="https://www.gov.br/saude/pt-br/composicao/saps/publicacoes/cartazes-e-cartilhas" target="_blank">&#128196; Ver cartilha oficial do Minist&eacute;rio da Sa&uacute;de</a>
+          </div>
+        </div>
+
+        <!-- 6. Dengue -->
+        <div class="ccard" id="c6">
+          <div class="ccard-hdr">
+            <div class="ccard-ico" style="background:#E0F7FA">&#129473;</div>
+            <div style="flex:1">
+              <div class="ccard-cat" style="color:#004D40">Sa&uacute;de Ambiental</div>
+              <div class="ccard-name">Dengue, Zika e Chikungunya</div>
+              <div class="ccard-src">Minist&eacute;rio da Sa&uacute;de &middot; SVS &middot; 2024</div>
+            </div>
+            <button class="toggle-btn" onclick="toggleCart('c6',this)">Ver resumo</button>
+          </div>
+          <div class="ccard-body">
+            <div class="cintro">Transmitidas pelo mosquito Aedes aegypti que se cria em &aacute;gua parada. Eliminar os criadouros &eacute; a melhor prote&ccedil;&atilde;o para sua fam&iacute;lia.</div>
+            <div class="csec-title">Elimine os criadouros em casa</div>
+            <div class="steps-list">
+              <div class="step-r"><div class="step-b">1</div><div class="step-t">Tampe sempre as caixas de &aacute;gua e barris</div></div>
+              <div class="step-r"><div class="step-b">2</div><div class="step-t">Limpe as calhas e verifique que n&atilde;o acumula &aacute;gua</div></div>
+              <div class="step-r"><div class="step-b">3</div><div class="step-t">Coloque areia nos vasos de plantas com prato</div></div>
+              <div class="step-r"><div class="step-b">4</div><div class="step-t">Vire garrafas, pneus e baldes de boca para baixo</div></div>
+              <div class="step-r"><div class="step-b">5</div><div class="step-t">Troque a &aacute;gua do bebedouro dos animais todo dia</div></div>
+            </div>
+            <div class="csec-title">Sinais de dengue grave &mdash; v&aacute; ao pronto-socorro</div>
+            <div class="alert-box"><div style="font-size:18px;flex-shrink:0">&#128680;</div><div class="alert-txt">Dor de barriga intensa e cont&iacute;nua</div></div>
+            <div class="alert-box"><div style="font-size:18px;flex-shrink:0">&#128680;</div><div class="alert-txt">V&ocirc;mitos repetidos &mdash; mais de 3 vezes ao dia</div></div>
+            <div class="alert-box"><div style="font-size:18px;flex-shrink:0">&#128680;</div><div class="alert-txt">Sangramento no nariz, gengiva ou manchas roxas na pele</div></div>
+            <a class="ms-link" href="https://www.gov.br/saude/pt-br/composicao/svs/vigilancia-ambiental/doencas-transmitidas-por-vetores/dengue" target="_blank">&#128196; Ver cartilha oficial do Minist&eacute;rio da Sa&uacute;de</a>
+          </div>
+        </div>
+
+        <!-- 7. Saude Mental -->
+        <div class="ccard" id="c7">
+          <div class="ccard-hdr">
+            <div class="ccard-ico" style="background:#F5EEF8">&#129504;</div>
+            <div style="flex:1">
+              <div class="ccard-cat" style="color:#4A235A">Sa&uacute;de Mental</div>
+              <div class="ccard-name">Sa&uacute;de Mental na Comunidade</div>
+              <div class="ccard-src">Minist&eacute;rio da Sa&uacute;de &middot; 2024</div>
+            </div>
+            <button class="toggle-btn" onclick="toggleCart('c7',this)">Ver resumo</button>
+          </div>
+          <div class="ccard-body">
+            <div class="cintro">Sa&uacute;de mental &eacute; t&atilde;o importante quanto sa&uacute;de f&iacute;sica. Falar sobre isso n&atilde;o &eacute; fraqueza &mdash; &eacute; coragem.</div>
+            <div class="csec-title">Entendendo os sentimentos</div>
+            <div class="info-cards">
+              <div class="info-card" style="border-left-color:#6C3483"><div class="info-card-ico">&#128550;</div><div><div class="info-card-ttl">Ansiedade</div><div class="info-card-desc">Preocupa&ccedil;&atilde;o excessiva, cora&ccedil;&atilde;o acelerado. Tem tratamento.</div></div></div>
+              <div class="info-card" style="border-left-color:#6C3483"><div class="info-card-ico">&#128532;</div><div><div class="info-card-ttl">Depress&atilde;o</div><div class="info-card-desc">Tristeza profunda. N&atilde;o &eacute; pregui&ccedil;a &mdash; &eacute; doen&ccedil;a e tem cura.</div></div></div>
+              <div class="info-card" style="border-left-color:#6C3483"><div class="info-card-ico">&#128548;</div><div><div class="info-card-ttl">Estresse</div><div class="info-card-desc">Tens&atilde;o, irrita&ccedil;&atilde;o, dificuldade de dormir. O corpo pede socorro.</div></div></div>
+            </div>
+            <div class="csec-title">O que ajuda no dia a dia</div>
+            <div class="tip-grid">
+              <div class="tip-item"><div class="tip-ico">&#127795;</div><div class="tip-txt">Passar tempo na natureza</div></div>
+              <div class="tip-item"><div class="tip-ico">&#128483;&#65039;</div><div class="tip-txt">Conversar com algu&eacute;m de confian&ccedil;a</div></div>
+              <div class="tip-item"><div class="tip-ico">&#128564;</div><div class="tip-txt">Dormir bem toda noite</div></div>
+              <div class="tip-item"><div class="tip-ico">&#128694;</div><div class="tip-txt">Caminhar ou fazer exerc&iacute;cio leve</div></div>
+            </div>
+            <div class="alert-box"><div style="font-size:18px;flex-shrink:0">&#128222;</div><div class="alert-txt">CVV &mdash; Centro de Valoriza&ccedil;&atilde;o da Vida: ligue 188 (gratuito, 24 horas). Qualquer momento dif&iacute;cil &eacute; v&aacute;lido para ligar.</div></div>
+            <a class="ms-link" href="https://www.gov.br/saude/pt-br/centrais-de-conteudo/publicacoes/cartilhas/2024" target="_blank">&#128196; Ver cartilha oficial do Minist&eacute;rio da Sa&uacute;de</a>
+          </div>
+        </div>
+
+        <!-- 8. Leptospirose -->
+        <div class="ccard" id="c8">
+          <div class="ccard-hdr">
+            <div class="ccard-ico" style="background:#E0F7FA">&#127754;</div>
+            <div style="flex:1">
+              <div class="ccard-cat" style="color:#004D40">Sa&uacute;de Ambiental</div>
+              <div class="ccard-name">Leptospirose &mdash; Doen&ccedil;a das enchentes</div>
+              <div class="ccard-src">Minist&eacute;rio da Sa&uacute;de &middot; SVS &middot; 2023</div>
+            </div>
+            <button class="toggle-btn" onclick="toggleCart('c8',this)">Ver resumo</button>
+          </div>
+          <div class="ccard-body">
+            <div class="cintro">Causada por bact&eacute;ria na urina de ratos que se mistura com a &aacute;gua das enchentes. Muito comum no Pantanal e pode ser fatal sem tratamento r&aacute;pido.</div>
+            <div class="csec-title">Como se proteger</div>
+            <div class="steps-list">
+              <div class="step-r"><div class="step-b">1</div><div class="step-t">Nunca entre em &aacute;gua de enchente sem prote&ccedil;&atilde;o</div></div>
+              <div class="step-r"><div class="step-b">2</div><div class="step-t">Use botas de borracha e luvas ao trabalhar perto da &aacute;gua</div></div>
+              <div class="step-r"><div class="step-b">3</div><div class="step-t">Lave bem alimentos que tocaram &aacute;gua de enchente</div></div>
+              <div class="step-r"><div class="step-b">4</div><div class="step-t">N&atilde;o deixe lixo acumulado &mdash; atrai ratos</div></div>
+              <div class="step-r"><div class="step-b">5</div><div class="step-t">Ap&oacute;s enchente: lave o corpo com &aacute;gua e sab&atilde;o</div></div>
+            </div>
+            <div class="csec-title">Sinais ap&oacute;s enchente &mdash; aja r&aacute;pido</div>
+            <div class="alert-box"><div style="font-size:18px;flex-shrink:0">&#128680;</div><div class="alert-txt">Febre e dores musculares ap&oacute;s contato com enchente: v&aacute; ao posto imediatamente e informe o m&eacute;dico</div></div>
+            <div class="alert-box"><div style="font-size:18px;flex-shrink:0">&#128680;</div><div class="alert-txt">Olhos e pele amarelados, urina escura &mdash; fase grave. V&aacute; ao pronto-socorro agora</div></div>
+            <a class="ms-link" href="https://www.gov.br/saude/pt-br/composicao/svs/vigilancia-epidemiologica/leptospirose" target="_blank">&#128196; Ver cartilha oficial do Minist&eacute;rio da Sa&uacute;de</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- URGENCIA -->
+    <div class="page" id="page-urgencia">
+      <div class="proto">
+        <div class="phdr"><div class="pico">&#128013;</div><div class="ptitle2">Picada de Cobra</div><div class="ptag2">Emerg&ecirc;ncia</div></div>
+        <div class="slist">
+          <div class="srow"><div class="snum">1</div><div class="stxt">Mantenha a v&iacute;tima calma e deitada</div></div>
+          <div class="srow"><div class="snum">2</div><div class="stxt">Imobilize o membro afetado &mdash; n&atilde;o movimente</div></div>
+          <div class="srow"><div class="snum">3</div><div class="stxt">Retire an&eacute;is, pulseiras e roupas apertadas</div></div>
+          <div class="srow"><div class="snum">4</div><div class="stxt">N&Atilde;O fa&ccedil;a torniquete, N&Atilde;O sugar o veneno, N&Atilde;O fazer cortes</div></div>
+          <div class="srow"><div class="snum">5</div><div class="stxt">Leve ao hospital o mais r&aacute;pido poss&iacute;vel</div></div>
+        </div>
+        <button class="samubtn" onclick="window.location='tel:192'">&#128222; Ligar SAMU 192</button>
+      </div>
+      <div class="proto">
+        <div class="phdr"><div class="pico">&#129986;</div><div class="ptitle2">Picada de Escorpi&atilde;o</div><div class="ptag2">Grave em crian&ccedil;as</div></div>
+        <div class="slist">
+          <div class="srow"><div class="snum">1</div><div class="stxt">Lave o local com &aacute;gua e sab&atilde;o</div></div>
+          <div class="srow"><div class="snum">2</div><div class="stxt">Aplique compressa fria no local da picada</div></div>
+          <div class="srow"><div class="snum">3</div><div class="stxt">N&Atilde;O use torniquete nem fa&ccedil;a cortes</div></div>
+          <div class="srow"><div class="snum">4</div><div class="stxt">Crian&ccedil;as menores de 7 anos e idosos: leve ao posto imediatamente</div></div>
+        </div>
+        <button class="samubtn" onclick="window.location='tel:192'">&#128222; Ligar SAMU 192</button>
+      </div>
+      <div class="proto">
+        <div class="phdr"><div class="pico">&#127754;</div><div class="ptitle2">Afogamento</div><div class="ptag2">Emerg&ecirc;ncia</div></div>
+        <div class="slist">
+          <div class="srow"><div class="snum">1</div><div class="stxt">Retire a v&iacute;tima da &aacute;gua com seguran&ccedil;a</div></div>
+          <div class="srow"><div class="snum">2</div><div class="stxt">Verifique se est&aacute; respirando</div></div>
+          <div class="srow"><div class="snum">3</div><div class="stxt">Se n&atilde;o respirar: 30 compress&otilde;es no peito + 2 respira&ccedil;&otilde;es (RCP)</div></div>
+          <div class="srow"><div class="snum">4</div><div class="stxt">N&Atilde;O chacoalhe para tirar &aacute;gua &mdash; mito perigoso</div></div>
+        </div>
+        <button class="samubtn" onclick="window.location='tel:192'">&#128222; Ligar SAMU 192</button>
+      </div>
+      <div class="proto">
+        <div class="phdr"><div class="pico">&#9889;</div><div class="ptitle2">Convuls&atilde;o</div><div class="ptag2">Emerg&ecirc;ncia</div></div>
+        <div class="slist">
+          <div class="srow"><div class="snum">1</div><div class="stxt">Proteja a cabe&ccedil;a da v&iacute;tima com algo macio</div></div>
+          <div class="srow"><div class="snum">2</div><div class="stxt">Retire objetos do entorno &mdash; evite acidentes</div></div>
+          <div class="srow"><div class="snum">3</div><div class="stxt">Vire de lado ap&oacute;s as contra&ccedil;&otilde;es pararem</div></div>
+          <div class="srow"><div class="snum">4</div><div class="stxt">N&Atilde;O coloque nada na boca &mdash; mito perigoso</div></div>
+          <div class="srow"><div class="snum">5</div><div class="stxt">Cronometre a dura&ccedil;&atilde;o da crise</div></div>
+        </div>
+        <button class="samubtn" onclick="window.location='tel:192'">&#128222; Ligar SAMU 192</button>
+      </div>
+      <div class="proto">
+        <div class="phdr"><div class="pico">&#128167;</div><div class="ptitle2">Desidrata&ccedil;&atilde;o Grave</div><div class="ptag2">Crian&ccedil;as</div></div>
+        <div class="slist">
+          <div class="srow"><div class="snum">1</div><div class="stxt">Soro caseiro: 1L &aacute;gua + 1 col. sal + 8 col. a&ccedil;&uacute;car</div></div>
+          <div class="srow"><div class="snum">2</div><div class="stxt">Ofere&ccedil;a em colheradas a cada 2 minutos</div></div>
+          <div class="srow"><div class="snum">3</div><div class="stxt">N&Atilde;O force grandes volumes de uma vez</div></div>
+          <div class="srow"><div class="snum">4</div><div class="stxt">Observe moleira afundada em beb&ecirc;s &mdash; sinal grave</div></div>
+          <div class="srow"><div class="snum">5</div><div class="stxt">Se n&atilde;o melhorar em 2 horas: leve ao posto</div></div>
+        </div>
+        <button class="samubtn" onclick="window.location='tel:192'">&#128222; Ligar SAMU 192</button>
+      </div>
+    </div>
+
+    <!-- CONSULTA -->
+    <div class="page" id="page-consulta">
+      <div class="conshero">
+        <div class="chico">&#128104;&#8205;&#9877;&#65039;</div>
+        <div>
+          <div class="chtitle">Cl&iacute;nico Geral SIATE&#174;</div>
+          <div class="chsub">Atendimento imediato &middot; Encaminhamento para especialista se necess&aacute;rio</div>
+          <div class="chips">
+            <span class="chip" style="background:#E1F5EE;color:#085041">&#128118; Pediatria</span>
+            <span class="chip" style="background:#E6F1FB;color:#0C447C">&#129354; Ginecologia</span>
+            <span class="chip" style="background:#FAEEDA;color:#633806">&#129440; Infectologia</span>
+            <span class="chip" style="background:#F5EEF8;color:#4A235A">&#129504; Neurologia</span>
+            <span class="chip" style="background:#FCEBEB;color:#791F1F">&#10084;&#65039; Cardiologia</span>
+            <span class="chip" style="background:#EDE7F6;color:#4527A0">&#128138; Psiquiatria</span>
+            <span class="chip" style="background:#FDEDEC;color:#993C1D">&#9760;&#65039; CEATOX</span>
+          </div>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="card">
+          <div class="ctitle">Dados do paciente</div>
+          <div class="fg"><label class="flbl">Nome do paciente</label><input class="fi" id="cNome" type="text" placeholder="Nome completo do paciente"></div>
+          <div class="fgrow">
+            <div class="fg"><label class="flbl">Nascimento</label><input class="fi" id="cNasc" type="date"></div>
+            <div class="fg"><label class="flbl">Celular</label><input class="fi" id="cTel" type="tel" placeholder="(67) 99999-9999"></div>
+          </div>
+          <div class="fg"><label class="flbl">Queixa principal</label><textarea class="fi" id="cQueixa" rows="3" placeholder="Descreva o motivo da consulta..." style="resize:none"></textarea></div>
+          <button class="sbtn" onclick="startCons()">&#128249; Iniciar Consulta Online</button>
+          <div id="consRoom" style="display:none" class="roombox">
+            <div style="font-size:12px;font-weight:700;color:#0F6E56;margin-bottom:4px">&#10003; Sala criada com sucesso!</div>
+            <div style="font-size:11px;color:#5F6B7A;margin-bottom:4px">Compartilhe o link com o m&eacute;dico de plant&atilde;o:</div>
+            <div class="roomlink" id="roomLink"></div>
+            <button class="copybtn" onclick="copyRoom()">Copiar link</button>
+            <a class="openbtn" id="roomOpen" href="#" target="_blank">Entrar na consulta</a>
+          </div>
+        </div>
+        <div class="card">
+          <div class="ctitle">Como funciona</div>
+          <div style="display:flex;flex-direction:column;gap:11px;margin-bottom:14px">
+            <div style="display:flex;gap:9px;align-items:flex-start"><div style="width:22px;height:22px;border-radius:50%;background:#1A5276;color:white;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div><div style="font-size:12.5px;color:#5F6B7A;line-height:1.5">Preencha os dados do paciente ao lado</div></div>
+            <div style="display:flex;gap:9px;align-items:flex-start"><div style="width:22px;height:22px;border-radius:50%;background:#1A5276;color:white;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div><div style="font-size:12.5px;color:#5F6B7A;line-height:1.5">Clique em iniciar &mdash; uma sala de v&iacute;deo &eacute; criada automaticamente</div></div>
+            <div style="display:flex;gap:9px;align-items:flex-start"><div style="width:22px;height:22px;border-radius:50%;background:#1A5276;color:white;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div><div style="font-size:12.5px;color:#5F6B7A;line-height:1.5">O m&eacute;dico entra na mesma sala e faz o atendimento por v&iacute;deo</div></div>
+          </div>
+          <div style="background:#F4F6F7;border-radius:9px;padding:10px 12px;font-size:11.5px;color:#5F6B7A;display:flex;gap:7px;align-items:center">
+            <span style="font-size:14px">&#128274;</span> Consulta segura e gratuita. Seus dados ficam apenas no seu dispositivo.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PERFIL -->
+    <div class="page" id="page-perfil">
+      <div class="fcard">
+        <div class="pfhdr">
+          <div class="pfav" id="pfAv">&#128100;</div>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:#2C3E50" id="pfNm">Meu Perfil</div>
+            <div style="font-size:12px;color:#85929E;margin-top:2px">SIATE&#174; &middot; Projeto Navega MS</div>
+          </div>
+        </div>
+        <div class="fgrow" style="margin-bottom:11px">
+          <div class="fg"><label class="flbl">Nome completo</label><input class="fi" id="fNome" type="text" placeholder="Seu nome completo"></div>
+          <div class="fg"><label class="flbl">Data de nascimento</label><input class="fi" id="fNasc" type="date"></div>
+        </div>
+        <div class="fgrow" style="margin-bottom:11px">
+          <div class="fg"><label class="flbl">Celular</label><input class="fi" id="fTel" type="tel" placeholder="(67) 99999-9999"></div>
+          <div class="fg"><label class="flbl">Munic&iacute;pio</label><input class="fi" id="fMun" type="text" placeholder="Ex: Corumb&aacute; &mdash; MS"></div>
+        </div>
+        <div class="fg" style="margin-bottom:14px"><label class="flbl">Comunidade / Localidade</label><input class="fi" id="fLocal" type="text" placeholder="Ex: Comunidade Rio Paraguai"></div>
+        <button class="sbtn" onclick="savePerf()">Salvar Perfil</button>
+        <span id="pfOk" style="display:none;margin-left:10px;font-size:12px;color:#0F6E56;font-weight:600">&#10003; Salvo!</span>
+      </div>
+      <div class="row2">
+        <div class="card" style="text-align:center">
+          <div style="font-size:26px;margin-bottom:7px">&#128274;</div>
+          <div style="font-size:13px;font-weight:700;color:#2C3E50;margin-bottom:3px">Privacidade</div>
+          <div style="font-size:11.5px;color:#85929E">Dados apenas no seu dispositivo</div>
+        </div>
+        <div class="card" style="text-align:center">
+          <div style="font-size:26px;margin-bottom:7px">&#129322;</div>
+          <div style="font-size:13px;font-weight:700;color:#2C3E50;margin-bottom:3px">Consultas</div>
+          <div style="font-size:11.5px;color:#85929E">Dados agilizam o atendimento</div>
+        </div>
+      </div>
+      <div style="text-align:center;padding:10px 0 4px">
+        <div style="font-size:11px;color:#85929E">SIATE&#174; &middot; Sistema Integrado de Atendimento em Telemedicina &middot; Projeto Navega MS &middot; 2025</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function toggleCart(id, btn){
+  var card = document.getElementById(id);
+  var isOpen = card.classList.contains("open");
+  document.querySelectorAll(".ccard").forEach(function(c){
+    c.classList.remove("open");
+    var b = c.querySelector(".toggle-btn");
+    if(b) b.textContent = "Ver resumo";
+  });
+  if(!isOpen){
+    card.classList.add("open");
+    btn.textContent = "Fechar";
+  }
+}
+function go(id,btn){
+  document.querySelectorAll(".page").forEach(function(p){p.classList.remove("on");});
+  document.getElementById("page-"+id).classList.add("on");
+  document.querySelectorAll(".nb").forEach(function(b){b.classList.remove("on");});
+  if(btn) btn.classList.add("on");
+  document.querySelectorAll(".si").forEach(function(s){s.classList.remove("on");});
+  window.scrollTo(0,0);
+}
+function startCons(){
+  var nome=document.getElementById("cNome").value.trim();
+  var queixa=document.getElementById("cQueixa").value.trim();
+  if(!nome){alert("Informe o nome do paciente.");return;}
+  if(!queixa){alert("Descreva o motivo da consulta.");return;}
+  var slug=nome.toLowerCase().replace(/[^a-z0-9]/g,"-").replace(/-+/g,"-");
+  var sala="siate-"+slug+"-"+Date.now();
+  var url="https://meet.jit.si/"+sala;
+  document.getElementById("roomLink").textContent=url;
+  document.getElementById("roomOpen").href=url;
+  document.getElementById("consRoom").style.display="block";
+}
+function copyRoom(){
+  navigator.clipboard.writeText(document.getElementById("roomLink").textContent);
+  alert("Link copiado!");
+}
+function savePerf(){
+  var nome=document.getElementById("fNome").value.trim();
+  if(!nome){alert("Informe o nome completo.");return;}
+  var ini=nome.split(" ").map(function(w){return w[0];}).slice(0,2).join("").toUpperCase();
+  document.getElementById("pfAv").textContent=ini;
+  document.getElementById("pfNm").textContent=nome;
+  var ok=document.getElementById("pfOk");
+  ok.style.display="inline";
+  setTimeout(function(){ok.style.display="none";},3000);
+}
+</script>
+</body>
+</html>
